@@ -1,6 +1,7 @@
 package com.example.tharaa.service.impl;
 
 import com.example.tharaa.domain.entity.Author;
+import com.example.tharaa.exception.ResourceNotFoundException;
 import com.example.tharaa.repository.AuthorRepository;
 import com.example.tharaa.service.AuthorService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Author getAuthorById(Long id) {
         return authorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Author not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
     }
 
     @Override
@@ -39,6 +40,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void deleteAuthor(Long id) {
+        if (!authorRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Cannot delete. Author not found with id: " + id);
+        }
         authorRepository.deleteById(id);
     }
 }

@@ -2,6 +2,7 @@ package com.example.tharaa.service.impl;
 
 
 import com.example.tharaa.domain.entity.Book;
+import com.example.tharaa.exception.ResourceNotFoundException;
 import com.example.tharaa.repository.BookRepository;
 import com.example.tharaa.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
     }
 
     @Override
@@ -42,6 +43,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Cannot delete. Book not found with id: " + id);
+        }
         bookRepository.deleteById(id);
     }
 }
