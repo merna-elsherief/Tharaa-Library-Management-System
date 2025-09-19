@@ -1,10 +1,7 @@
 package com.example.tharaa.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,11 +11,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "category")
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String name;
@@ -28,5 +27,6 @@ public class Category {
     private Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
+    @ToString.Exclude
     private Set<Category> subCategories = new HashSet<>();
 }

@@ -3,7 +3,11 @@ package com.example.tharaa.service.impl;
 import com.example.tharaa.domain.entity.Book;
 import com.example.tharaa.domain.entity.BorrowingTransaction;
 import com.example.tharaa.domain.entity.Member;
+import com.example.tharaa.domain.enums.TransactionStatus;
+import com.example.tharaa.dto.request.BorrowingTransactionRequestDto;
+import com.example.tharaa.dto.response.BorrowingTransactionResponseDto;
 import com.example.tharaa.exception.ResourceNotFoundException;
+import com.example.tharaa.mapper.BorrowingTransactionMapper;
 import com.example.tharaa.repository.BookRepository;
 import com.example.tharaa.repository.BorrowingTransactionRepository;
 import com.example.tharaa.repository.MemberRepository;
@@ -21,49 +25,58 @@ public class BorrowingTransactionServiceImpl implements BorrowingTransactionServ
     private final BorrowingTransactionRepository transactionRepository;
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
+    private final BorrowingTransactionMapper transactionMapper;
 
     @Override
-    public List<BorrowingTransaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public List<BorrowingTransactionResponseDto> getAllTransactions() {
+        return transactionRepository.findAll()
+                .stream()
+                .map(transactionMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public BorrowingTransaction getTransactionById(Long id) {
-        return transactionRepository.findById(id)
+    public BorrowingTransactionResponseDto getTransactionById(Long id) {
+        BorrowingTransaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + id));
+        return transactionMapper.toResponse(transaction);
     }
 
     @Override
-    public BorrowingTransaction borrowBook(Long memberId, Long bookId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + memberId));
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
+    public BorrowingTransactionResponseDto borrowBook(BorrowingTransactionRequestDto dto) {
+        Member member = memberRepository.findById(dto.memberId())
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + dto.memberId()));
+        Book book = bookRepository.findById(dto.bookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + dto.bookId()));
 
-        BorrowingTransaction transaction = BorrowingTransaction.builder()
-                .member(member)
-                .book(book)
-                .borrowedDate(LocalDate.now())
-                .dueDate(LocalDate.now().plusDays(14))
-                .returned(false)
-                .build();
+        BorrowingTransaction transaction = transactionMapper.toEntity(dto);
+        transaction.setMember(member);
+        transaction.setBook(book);
 
-        return transactionRepository.save(transaction);
+        return transactionMapper.toResponse(transactionRepository.save(transaction));
     }
 
     @Override
-    public BorrowingTransaction returnBook(Long transactionId) {
-        BorrowingTransaction transaction = getTransactionById(transactionId);
-        transaction.setReturned(true);
+    public BorrowingTransactionResponseDto returnBook(Long transactionId) {
+        BorrowingTransaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + transactionId));
+
         transaction.setReturnDate(LocalDate.now());
-        return transactionRepository.save(transaction);
+        transaction.setStatus(TransactionStatus.RETURNED);
+
+        return transactionMapper.toResponse(transactionRepository.save(transaction));
     }
 
     @Override
-    public void deleteTransaction(Long id) {
-        if (!transactionRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Cannot delete. Transaction not found with id: " + id);
-        }
-        transactionRepository.deleteById(id);
+    public List<BorrowingTransactionResponseDto> getOverdueTransactions() {
+        LocalDate today = LocalDate.now();
+        return transactionRepository.findAll()
+                .stream()
+                .filter(tx -> tx.getDueDate() != null &&
+                        tx.getReturnDate() == null &&
+                        tx.getDueDate().isBefore(today))
+                .peek(tx -> tx.setStatus(TransactionStatus.OVERDUE))
+                .map(transactionMapper::toResponse)
+                .toList();
     }
 }

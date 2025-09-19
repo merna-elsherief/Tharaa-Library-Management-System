@@ -19,18 +19,21 @@ public class CustomizedResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ExceptionResponse> handlerAllExceptions(Exception exception, WebRequest request) {
+        exception.printStackTrace();
         ExceptionResponse exceptionResponse = new ExceptionResponse(Instant.now(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handlerNotFoundExceptions(Exception exception, WebRequest request) {
+        exception.printStackTrace();
         ExceptionResponse exceptionResponse = new ExceptionResponse(Instant.now(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<ExceptionResponse> handlerMethodArgumentValidExceptions(MethodArgumentNotValidException exception, WebRequest request) {
+        exception.printStackTrace();
         var errors = exception.getFieldErrors().stream().map(fieldError -> "Field: " + fieldError.getField() + " Error: " + fieldError.getDefaultMessage()).toList();
         ExceptionResponse exceptionResponse = new ExceptionResponse(Instant.now(), errors.toString(), request.getDescription(false));
 

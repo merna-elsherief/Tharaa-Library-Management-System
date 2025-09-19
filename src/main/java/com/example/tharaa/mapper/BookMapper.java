@@ -11,6 +11,10 @@ import java.util.Set;
 
 public interface BookMapper {
     BookResponseDto toResponse(Book book);
-
-    void updateEntityFromRequest(BookRequestDto dto, Book book, Publisher publisher, Category category, Set<Author> authors);
+    Book toEntity(BookRequestDto dto);
+    void updateEntityFromRequest(BookRequestDto dto,
+                                 Book book,
+                                 Publisher publisher,
+                                 Category category,
+                                 Set<Author> authors);
 }

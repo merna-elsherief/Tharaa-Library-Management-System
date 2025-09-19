@@ -1,6 +1,7 @@
 package com.example.tharaa.controller;
 
-import com.example.tharaa.domain.entity.BorrowingTransaction;
+import com.example.tharaa.dto.request.BorrowingTransactionRequestDto;
+import com.example.tharaa.dto.response.BorrowingTransactionResponseDto;
 import com.example.tharaa.service.BorrowingTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +17,27 @@ public class BorrowingTransactionController {
     private final BorrowingTransactionService transactionService;
 
     @GetMapping
-    public List<BorrowingTransaction> getAllTransactions() {
+    public List<BorrowingTransactionResponseDto> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BorrowingTransaction> getTransactionById(@PathVariable Long id) {
+    public ResponseEntity<BorrowingTransactionResponseDto> getTransactionById(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
 
     @PostMapping("/borrow")
-    public ResponseEntity<BorrowingTransaction> borrowBook(@RequestParam Long memberId, @RequestParam Long bookId) {
-        return ResponseEntity.ok(transactionService.borrowBook(memberId, bookId));
+    public ResponseEntity<BorrowingTransactionResponseDto> borrowBook(@RequestBody BorrowingTransactionRequestDto dto) {
+        return ResponseEntity.ok(transactionService.borrowBook(dto));
     }
 
-    @PutMapping("/{id}/return")
-    public ResponseEntity<BorrowingTransaction> returnBook(@PathVariable Long id) {
+    @PutMapping("/return/{id}")
+    public ResponseEntity<BorrowingTransactionResponseDto> returnBook(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.returnBook(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
-        transactionService.deleteTransaction(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/overdue")
+    public List<BorrowingTransactionResponseDto> getOverdueTransactions() {
+        return transactionService.getOverdueTransactions();
     }
 }

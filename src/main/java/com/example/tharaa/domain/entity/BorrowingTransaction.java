@@ -1,10 +1,8 @@
 package com.example.tharaa.domain.entity;
 
+import com.example.tharaa.domain.enums.TransactionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -13,11 +11,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "borrowing_transaction")
 public class BorrowingTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne
@@ -28,11 +28,12 @@ public class BorrowingTransaction {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    private LocalDate borrowedDate;
+    private LocalDate borrowDate;
 
     private LocalDate dueDate;
 
     private LocalDate returnDate;
 
-    private boolean returned = false;
+    @Enumerated(EnumType.STRING)
+    private TransactionStatus status;
 }

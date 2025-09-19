@@ -11,16 +11,19 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "author")
 public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String name;
 
     @ManyToMany(mappedBy = "authors")
+    @ToString.Exclude
     private Set<Book> books = new HashSet<>();
 }
 

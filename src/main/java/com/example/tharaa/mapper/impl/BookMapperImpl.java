@@ -18,6 +18,17 @@ public class BookMapperImpl implements BookMapper {
 
     @Override
     public BookResponseDto toResponse(Book book) {
+        String publisherName = book.getPublisher() != null ? book.getPublisher().getName() : null;
+        String categoryName = book.getCategory() != null ? book.getCategory().getName() : null;
+
+        Set<String> authorNames = new HashSet<>();
+        if (book.getAuthors() != null && !book.getAuthors().isEmpty()) {
+            authorNames = book.getAuthors()
+                    .stream()
+                    .map(Author::getName)
+                    .collect(Collectors.toSet());
+        }
+
         return new BookResponseDto(
                 book.getId(),
                 book.getTitle(),
@@ -26,15 +37,32 @@ public class BookMapperImpl implements BookMapper {
                 book.getEdition(),
                 book.getSummary(),
                 book.getLanguage(),
-                book.getCoverImageUrl(),
-                book.getPublisher() != null ? book.getPublisher().getName() : null,
-                book.getCategory() != null ? book.getCategory().getName() : null,
-                book.getAuthors().stream().map(Author::getName).collect(Collectors.toSet())
+                book.getCoverImageUrl() != null ? book.getCoverImageUrl() : "", // safe
+                publisherName,
+                categoryName,
+                authorNames
         );
     }
 
     @Override
-    public void updateEntityFromRequest(BookRequestDto dto, Book book, Publisher publisher, Category category, Set<Author> authors) {
+    public Book toEntity(BookRequestDto dto) {
+        return Book.builder()
+                .title(dto.title())
+                .isbn(dto.isbn())
+                .publicationYear(dto.publicationYear())
+                .edition(dto.edition())
+                .summary(dto.summary())
+                .language(dto.language())
+                .coverImageUrl(dto.coverImageUrl())
+                .build();
+    }
+
+    @Override
+    public void updateEntityFromRequest(BookRequestDto dto,
+                                        Book book,
+                                        Publisher publisher,
+                                        Category category,
+                                        Set<Author> authors) {
         book.setTitle(dto.title());
         book.setIsbn(dto.isbn());
         book.setPublicationYear(dto.publicationYear());
@@ -44,7 +72,6 @@ public class BookMapperImpl implements BookMapper {
         book.setCoverImageUrl(dto.coverImageUrl());
         book.setPublisher(publisher);
         book.setCategory(category);
-        book.setAuthors(authors != null ? authors : new HashSet<>());
+        book.setAuthors(authors);
     }
 }
-
