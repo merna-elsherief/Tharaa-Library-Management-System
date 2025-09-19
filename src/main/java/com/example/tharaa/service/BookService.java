@@ -1,14 +1,15 @@
 package com.example.tharaa.service;
 
-import com.example.tharaa.domain.entity.Book;
+import com.example.tharaa.dto.request.BookRequestDto;
+import com.example.tharaa.dto.response.BookResponseDto;
 
 import java.util.List;
 
 public interface BookService {
-    List<Book> getAllBooks();
-    Book getBookById(Long id);
-    Book createBook(Book book);
-    Book updateBook(Long id, Book bookDetails);
+    List<BookResponseDto> getAllBooks();
+    BookResponseDto getBookById(Long id);
+    BookResponseDto createBook(BookRequestDto dto);
+    BookResponseDto updateBook(Long id, BookRequestDto dto);
     void deleteBook(Long id);
 }
 

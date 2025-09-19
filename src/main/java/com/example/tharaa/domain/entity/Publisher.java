@@ -1,28 +1,26 @@
 package com.example.tharaa.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "member")
-public class Member {
+@Table(name = "publisher")
+public class Publisher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String firstName;
-
-    private String lastName;
-
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    private String phoneNumber;
+    private String name;
 
     private String address;
+
+    private String website;
 }

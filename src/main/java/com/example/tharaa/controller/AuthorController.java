@@ -1,6 +1,7 @@
 package com.example.tharaa.controller;
 
-import com.example.tharaa.domain.entity.Author;
+import com.example.tharaa.dto.request.AuthorRequestDto;
+import com.example.tharaa.dto.response.AuthorResponseDto;
 import com.example.tharaa.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +17,23 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @GetMapping
-    public List<Author> getAllAuthors() {
+    public List<AuthorResponseDto> getAllAuthors() {
         return authorService.getAllAuthors();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponseDto> getAuthorById(@PathVariable Long id) {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
-        return ResponseEntity.ok(authorService.createAuthor(author));
+    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto) {
+        return ResponseEntity.ok(authorService.createAuthor(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @RequestBody Author author) {
-        return ResponseEntity.ok(authorService.updateAuthor(id, author));
+    public ResponseEntity<AuthorResponseDto> updateAuthor(@PathVariable Long id, @RequestBody AuthorRequestDto dto) {
+        return ResponseEntity.ok(authorService.updateAuthor(id, dto));
     }
 
     @DeleteMapping("/{id}")

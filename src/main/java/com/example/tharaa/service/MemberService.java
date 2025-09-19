@@ -1,13 +1,14 @@
 package com.example.tharaa.service;
 
-import com.example.tharaa.domain.entity.Member;
+import com.example.tharaa.dto.request.MemberRequestDto;
+import com.example.tharaa.dto.response.MemberResponseDto;
 
 import java.util.List;
 
 public interface MemberService {
-    List<Member> getAllMembers();
-    Member getMemberById(Long id);
-    Member createMember(Member member);
-    Member updateMember(Long id, Member memberDetails);
+    List<MemberResponseDto> getAllMembers();
+    MemberResponseDto getMemberById(Long id);
+    MemberResponseDto createMember(MemberRequestDto dto);
+    MemberResponseDto updateMember(Long id, MemberRequestDto dto);
     void deleteMember(Long id);
 }

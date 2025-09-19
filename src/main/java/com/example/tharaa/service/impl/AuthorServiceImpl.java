@@ -1,7 +1,10 @@
 package com.example.tharaa.service.impl;
 
 import com.example.tharaa.domain.entity.Author;
+import com.example.tharaa.dto.request.AuthorRequestDto;
+import com.example.tharaa.dto.response.AuthorResponseDto;
 import com.example.tharaa.exception.ResourceNotFoundException;
+import com.example.tharaa.mapper.AuthorMapper;
 import com.example.tharaa.repository.AuthorRepository;
 import com.example.tharaa.service.AuthorService;
 import lombok.RequiredArgsConstructor;
@@ -14,28 +17,35 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
     @Override
-    public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+    public List<AuthorResponseDto> getAllAuthors() {
+        return authorRepository.findAll()
+                .stream()
+                .map(authorMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public Author getAuthorById(Long id) {
-        return authorRepository.findById(id)
+    public AuthorResponseDto getAuthorById(Long id) {
+        Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
+        return authorMapper.toResponse(author);
     }
 
     @Override
-    public Author createAuthor(Author author) {
-        return authorRepository.save(author);
+    public AuthorResponseDto createAuthor(AuthorRequestDto dto) {
+        Author author = authorMapper.toEntity(dto);
+        return authorMapper.toResponse(authorRepository.save(author));
     }
 
     @Override
-    public Author updateAuthor(Long id, Author authorDetails) {
-        Author author = getAuthorById(id);
-        author.setName(authorDetails.getName());
-        return authorRepository.save(author);
+    public AuthorResponseDto updateAuthor(Long id, AuthorRequestDto dto) {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + id));
+        authorMapper.updateEntityFromRequest(dto, author);
+        return authorMapper.toResponse(authorRepository.save(author));
     }
 
     @Override

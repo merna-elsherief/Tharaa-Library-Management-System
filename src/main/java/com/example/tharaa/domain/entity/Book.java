@@ -23,9 +23,19 @@ public class Book {
     private String title;
 
     @NotBlank(message = "ISBN is required")
+    @Column(unique = true)
     private String isbn;
 
     private int publicationYear;
+
+    private String edition;
+
+    @Column(length = 2000)
+    private String summary;
+
+    private String language;
+
+    private String coverImageUrl;
 
     @ManyToMany
     @JoinTable(
@@ -34,4 +44,12 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private Set<Author> authors = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
