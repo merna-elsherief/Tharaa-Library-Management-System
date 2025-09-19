@@ -1,7 +1,10 @@
 package com.example.tharaa.service.impl;
 
 import com.example.tharaa.domain.entity.Member;
+import com.example.tharaa.dto.request.MemberRequestDto;
+import com.example.tharaa.dto.response.MemberResponseDto;
 import com.example.tharaa.exception.ResourceNotFoundException;
+import com.example.tharaa.mapper.MemberMapper;
 import com.example.tharaa.repository.MemberRepository;
 import com.example.tharaa.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -14,32 +17,35 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberMapper memberMapper;
 
     @Override
-    public List<Member> getAllMembers() {
-        return memberRepository.findAll();
+    public List<MemberResponseDto> getAllMembers() {
+        return memberRepository.findAll()
+                .stream()
+                .map(memberMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public Member getMemberById(Long id) {
-        return memberRepository.findById(id)
+    public MemberResponseDto getMemberById(Long id) {
+        Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
+        return memberMapper.toResponse(member);
     }
 
     @Override
-    public Member createMember(Member member) {
-        return memberRepository.save(member);
+    public MemberResponseDto createMember(MemberRequestDto dto) {
+        Member member = memberMapper.toEntity(dto);
+        return memberMapper.toResponse(memberRepository.save(member));
     }
 
     @Override
-    public Member updateMember(Long id, Member memberDetails) {
-        Member member = getMemberById(id);
-        member.setFullName(memberDetails.getFullName());
-        member.setEmail(memberDetails.getEmail());
-        member.setPhone(memberDetails.getPhone());
-        member.setAddress(memberDetails.getAddress());
-        member.setActive(memberDetails.isActive());
-        return memberRepository.save(member);
+    public MemberResponseDto updateMember(Long id, MemberRequestDto dto) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
+        memberMapper.updateEntityFromRequest(dto, member);
+        return memberMapper.toResponse(memberRepository.save(member));
     }
 
     @Override

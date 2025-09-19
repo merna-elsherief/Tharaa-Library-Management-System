@@ -3,17 +3,14 @@ package com.example.tharaa.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "author")
-public class Author {
+@Table(name = "publisher")
+public class Publisher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +19,7 @@ public class Author {
 
     private String name;
 
-    @ManyToMany(mappedBy = "authors")
-    @ToString.Exclude
-    private Set<Book> books = new HashSet<>();
-}
+    private String address;
 
+    private String website;
+}

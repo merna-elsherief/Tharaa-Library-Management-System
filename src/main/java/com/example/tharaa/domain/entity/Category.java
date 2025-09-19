@@ -12,8 +12,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "author")
-public class Author {
+@Table(name = "category")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,11 @@ public class Author {
 
     private String name;
 
-    @ManyToMany(mappedBy = "authors")
-    @ToString.Exclude
-    private Set<Book> books = new HashSet<>();
-}
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parentCategory;
 
+    @OneToMany(mappedBy = "parentCategory")
+    @ToString.Exclude
+    private Set<Category> subCategories = new HashSet<>();
+}

@@ -1,8 +1,8 @@
 package com.example.tharaa.controller;
 
-import com.example.tharaa.domain.entity.Member;
+import com.example.tharaa.dto.request.MemberRequestDto;
+import com.example.tharaa.dto.response.MemberResponseDto;
 import com.example.tharaa.service.MemberService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,23 +17,23 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public List<Member> getAllMembers() {
+    public List<MemberResponseDto> getAllMembers() {
         return memberService.getAllMembers();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@PathVariable Long id) {
+    public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.getMemberById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Member> createMember(@Valid @RequestBody Member member) {
-        return ResponseEntity.ok(memberService.createMember(member));
+    public ResponseEntity<MemberResponseDto> createMember(@RequestBody MemberRequestDto dto) {
+        return ResponseEntity.ok(memberService.createMember(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@PathVariable Long id, @Valid @RequestBody Member member) {
-        return ResponseEntity.ok(memberService.updateMember(id, member));
+    public ResponseEntity<MemberResponseDto> updateMember(@PathVariable Long id, @RequestBody MemberRequestDto dto) {
+        return ResponseEntity.ok(memberService.updateMember(id, dto));
     }
 
     @DeleteMapping("/{id}")

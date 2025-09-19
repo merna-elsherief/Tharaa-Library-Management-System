@@ -1,8 +1,8 @@
 package com.example.tharaa.controller;
 
-import com.example.tharaa.domain.entity.Book;
+import com.example.tharaa.dto.request.BookRequestDto;
+import com.example.tharaa.dto.response.BookResponseDto;
 import com.example.tharaa.service.BookService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,23 +17,23 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<BookResponseDto> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<BookResponseDto> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBookById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
-        return ResponseEntity.ok(bookService.createBook(book));
+    public ResponseEntity<BookResponseDto> createBook(@RequestBody BookRequestDto dto) {
+        return ResponseEntity.ok(bookService.createBook(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
-        return ResponseEntity.ok(bookService.updateBook(id, book));
+    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id, @RequestBody BookRequestDto dto) {
+        return ResponseEntity.ok(bookService.updateBook(id, dto));
     }
 
     @DeleteMapping("/{id}")

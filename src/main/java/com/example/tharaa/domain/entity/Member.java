@@ -1,39 +1,30 @@
 package com.example.tharaa.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import lombok.*;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "member")
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @NotBlank(message = "Full name is required")
-    private String fullName;
+    private String firstName;
 
-    @Email(message = "Invalid email format")
+    private String lastName;
+
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String phone;
+    private String phoneNumber;
 
     private String address;
-
-    private LocalDate membershipDate = LocalDate.now();
-
-    private boolean active = true;
 }
