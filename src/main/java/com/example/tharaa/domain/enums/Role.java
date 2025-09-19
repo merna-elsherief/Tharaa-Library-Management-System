@@ -1,6 +1,6 @@
 package com.example.tharaa.domain.enums;
 
-public enum Erole {
+public enum Role {
     ADMIN,
     LIBRARIAN,
     STAFF
