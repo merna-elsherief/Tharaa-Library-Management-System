@@ -31,6 +31,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(PUBLIC_URLS)
                                 .permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/librarian/**").hasAnyRole("LIBRARIAN", "ADMIN")
+                                .requestMatchers("/staff/**").hasAnyRole("STAFF", "LIBRARIAN", "ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 )
