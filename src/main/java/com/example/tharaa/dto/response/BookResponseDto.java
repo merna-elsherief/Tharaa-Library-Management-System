@@ -1,5 +1,7 @@
 package com.example.tharaa.dto.response;
 
+import com.example.tharaa.dto.CategoryDTO;
+
 import java.util.Set;
 
 public record BookResponseDto(
@@ -12,6 +14,6 @@ public record BookResponseDto(
         String language,
         String coverImageUrl,
         String publisherName,
-        String categoryName,
+        CategoryResponseDto category,
         Set<String> authorNames
 ) {}

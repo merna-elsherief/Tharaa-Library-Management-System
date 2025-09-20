@@ -1,7 +1,10 @@
 package com.example.tharaa.dto.response;
 
+import java.util.Set;
+
 public record CategoryResponseDto(
         Long id,
         String name,
-        Long parentCategoryId
+        CategoryParentDto parentCategory,
+        Set<CategoryResponseDto> subCategories
 ) {}

@@ -6,6 +6,8 @@ import com.example.tharaa.domain.entity.Category;
 import com.example.tharaa.domain.entity.Publisher;
 import com.example.tharaa.dto.request.BookRequestDto;
 import com.example.tharaa.dto.response.BookResponseDto;
+import com.example.tharaa.dto.response.CategoryParentDto;
+import com.example.tharaa.dto.response.CategoryResponseDto;
 import com.example.tharaa.mapper.BookMapper;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +18,32 @@ import java.util.stream.Collectors;
 @Component
 public class BookMapperImpl implements BookMapper {
 
+    private CategoryResponseDto toCategoryResponse(Category category) {
+        if (category == null) return null;
+
+        return new CategoryResponseDto(
+                category.getId(),
+                category.getName(),
+                category.getParentCategory() != null
+                        ? new CategoryParentDto(
+                        category.getParentCategory().getId(),
+                        category.getParentCategory().getName()
+                )
+                        : null,
+                category.getSubCategories() != null
+                        ? category.getSubCategories()
+                        .stream()
+                        .map(this::toCategoryResponse)
+                        .collect(Collectors.toSet())
+                        : Set.of()
+        );
+    }
+
+
     @Override
     public BookResponseDto toResponse(Book book) {
         String publisherName = book.getPublisher() != null ? book.getPublisher().getName() : null;
-        String categoryName = book.getCategory() != null ? book.getCategory().getName() : null;
+        CategoryResponseDto categoryDto = toCategoryResponse(book.getCategory());
 
         Set<String> authorNames = new HashSet<>();
         if (book.getAuthors() != null && !book.getAuthors().isEmpty()) {
@@ -39,7 +63,7 @@ public class BookMapperImpl implements BookMapper {
                 book.getLanguage(),
                 book.getCoverImageUrl() != null ? book.getCoverImageUrl() : "", // safe
                 publisherName,
-                categoryName,
+                categoryDto,
                 authorNames
         );
     }

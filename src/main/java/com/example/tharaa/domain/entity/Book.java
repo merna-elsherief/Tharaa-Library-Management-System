@@ -1,5 +1,6 @@
 package com.example.tharaa.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -46,10 +47,12 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     @ToString.Exclude
+    @JsonIgnoreProperties("books")
     private Set<Author> authors = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "publisher_id")
+    @JsonIgnoreProperties("books")
     private Publisher publisher;
 
     @ManyToOne(fetch = FetchType.EAGER)
